@@ -1,4 +1,5 @@
 import json
+import django
 from django import forms
 if django.VERSION >= (2, 0):
     from django.urls import reverse
