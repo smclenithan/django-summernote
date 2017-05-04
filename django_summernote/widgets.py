@@ -1,6 +1,9 @@
 import json
 from django import forms
-from django.core.urlresolvers import reverse
+if django.VERSION >= (2, 0):
+    from django.urls import reverse
+else:
+    from django.core.urlresolvers import reverse
 from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
