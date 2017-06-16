@@ -16,6 +16,7 @@ except ImportError:
     from django.forms.util import flatatt
 from django_summernote.settings import summernote_config
 from django.conf import settings
+from builtins import str as text    # Python 2 & 3 compatible unicode evaluation
 
 __all__ = ['SummernoteWidget', 'SummernoteInplaceWidget']
 
@@ -66,6 +67,13 @@ class SummernoteWidgetBase(forms.Textarea):
         for option in __summernote_options__:
             v = self.attrs.get(option, summernote_config.get(option))
             if v:
+                # Proxy models are not JSON serializable. Values obtained from the Django core via ugettext_lazy will
+                # return a __proxy__ type that is not serializble using the default serializers.
+                # This quick hack checks to see if the value is a proxy type and if so forces evaluation
+                # so that it can be serialized
+                if '.__proxy__' in text(type(v)):
+                    v = text(v)
+                contexts[option] = v
                 contexts[option] = v
 
         return contexts
